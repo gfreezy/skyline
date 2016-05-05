@@ -1,0 +1,33 @@
+{
+  "monitors": [
+    {
+      "log_name_prefix": "nginx",
+      "log_file_path": "test.log",
+      "filter_items": [
+        {
+          "item_name_prefix": "http",
+          "cycle": 5,
+          "match_str": "(\\d+\\.?\\d*)",
+          "threshold": 1,
+          "warnings": [
+            "nginx_500_err"
+          ]
+        },
+        {
+          "item_name_prefix": "tcp",
+          "cycle": 1,
+          "match_str": "(\\d+\\.?\\d*)",
+          "threshold": 1
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    {
+      "warning_name": "nginx_500_err",
+      "formula": "nginx_http_500_cnt > 20",
+      "warning_filter": "3/5",
+      "alert_name": "common_alert"
+    }
+  ]
+}

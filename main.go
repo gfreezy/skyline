@@ -3,85 +3,44 @@ package main
 import (
 	"container/ring"
 	"fmt"
-	"regexp"
-	"strconv"
-	"time"
 
+	"github.com/gfreezy/skyline/lib/skyline"
 	"github.com/hpcloud/tail"
 )
 
-type ParsedResult struct {
-	Number  float32
-	Matched bool
-	Time    time.Time
-}
-
-type CycleStats struct {
-	CycleNumber int64
-	Count       int64
-	Period      int64
-	Rate        float32
-	AverateTime float32
-}
-
 func main() {
-	var filename = "test.log"
+	var conf = skyline.LoadConfig("conf/config.json")
+	monitor(conf.Monitors[0])
+	// for _, monitorConf := range conf.Monitors {
+	// 	go monitor(monitorConf)
+	// }
+}
+
+func monitor(monitorConf skyline.MonitorConf) {
+	var filename = monitorConf.LogFilePath
 	t, err := tail.TailFile(filename, tail.Config{Follow: true, ReOpen: true})
 	if err != nil {
 		panic(err)
 	}
 
-	var (
-		cycle       int64   = 5
-		cycleNumber int64   = 0
-		count       int64   = 0
-		sum         float32 = 0
-		lastCycle   int64   = 0
-	)
+	filters := make([]*skyline.Filter, len(monitorConf.FilterItems))
+	for _, filterConf := range monitorConf.FilterItems {
+		filter := skyline.NewFilter(&filterConf)
+		filters = append(filters, filter)
+		go warn(filterConf.ItemNamePrefix, filter.CycleStatsChannel)
+	}
 
-	var statsChan = make(chan *ParsedResult)
-	var cycleStatsChan = make(chan *CycleStats)
-
-	go parseWorker(t.Lines, statsChan)
-	go warn(cycleStatsChan)
-
-	for stats := range statsChan {
-		timestamp := stats.Time.Unix()
-		currentNumber := timestamp % cycle
-
-		if currentNumber != lastCycle {
-			cycleStatsChan <- &CycleStats{
-				Count:       count,
-				Period:      cycle,
-				AverateTime: sum / float32(count),
-				Rate:        float32(count) / float32(cycle),
-				CycleNumber: cycleNumber,
+	for line := range t.Lines {
+		for _, f := range filters {
+			if f == nil {
+				continue
 			}
-
-			fmt.Printf("time: %s cycle: %d count: %d rate: %f avg: %f\n",
-				stats.Time, cycleNumber, count, float32(count)/float32(cycle), sum/float32(count))
-			lastCycle = currentNumber
-			cycleNumber += 1
-			count = 0
-			sum = 0
+			f.AddLine([]byte(line.Text), line.Time)
 		}
-		count += 1
-		sum += stats.Number
 	}
 }
 
-func parseWorker(lines <-chan *tail.Line, rets chan<- *ParsedResult) {
-	for line := range lines {
-		var ret = parse(line)
-		if !ret.Matched {
-			continue
-		}
-
-		rets <- ret
-	}
-}
-
-func warn(statsChan <-chan *CycleStats) {
+func warn(name string, statsChan <-chan skyline.Cycle) {
 	const ringLen = 100
 	var warning = false
 	var ringStats = ring.New(ringLen)
@@ -90,11 +49,11 @@ func warn(statsChan <-chan *CycleStats) {
 		needWarn := checkWarning(ringStats, 5)
 		if needWarn {
 			warning = true
-			fmt.Println("warning")
+			fmt.Println(name, "warning")
 		}
 		if !needWarn && warning {
 			warning = false
-			fmt.Println("warning cleared")
+			fmt.Println(name, "warning cleared")
 		}
 		ringStats = ringStats.Next()
 	}
@@ -102,16 +61,16 @@ func warn(statsChan <-chan *CycleStats) {
 
 func checkWarning(ringStats *ring.Ring, count int) bool {
 	var (
-		exceedTimes int = 0
+		exceedTimes int
 	)
 	for index := 0; index < count; index++ {
-		cycleStats, ok := ringStats.Value.(*CycleStats)
+		cycleStats, ok := ringStats.Value.(skyline.Cycle)
 		if !ok {
 			continue
 		}
 
-		if cycleStats.AverateTime > 1.0 {
-			exceedTimes += 1
+		if cycleStats.Averate() > 1.0 {
+			exceedTimes++
 		}
 
 		if exceedTimes > 3 {
@@ -121,18 +80,4 @@ func checkWarning(ringStats *ring.Ring, count int) bool {
 		ringStats = ringStats.Prev()
 	}
 	return false
-}
-
-func parse(line *tail.Line) *ParsedResult {
-	re := regexp.MustCompile("(\\d+\\.?\\d*)")
-	results := re.FindSubmatch([]byte(line.Text))
-	if len(results) == 0 {
-		return &ParsedResult{0, false, line.Time}
-	}
-	n, err := strconv.ParseFloat(string(results[1]), 32)
-	if err != nil {
-		panic(err)
-	}
-
-	return &ParsedResult{Number: float32(n), Matched: true, Time: line.Time}
 }
