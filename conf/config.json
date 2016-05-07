@@ -1,0 +1,85 @@
+{
+  "monitors": [
+    {
+      "log_name_prefix": "nginx",
+      "log_file_path": "test.log",
+      "filter_items": [
+        {
+          "item_name_prefix": "time1",
+          "cycle": 2,
+          "match_str": "(\\d+\\.?\\d*)",
+          "threshold": 1
+        },
+        {
+          "item_name_prefix": "time10",
+          "cycle": 5,
+          "match_str": "(\\d+\\.?\\d*)",
+          "threshold": 10
+        }
+      ]
+    },
+    {
+      "log_name_prefix": "nginx2",
+      "log_file_path": "test2.log",
+      "filter_items": [
+        {
+          "item_name_prefix": "time1",
+          "cycle": 1,
+          "match_str": "(\\d+\\.?\\d*)",
+          "threshold": 1
+        },
+        {
+          "item_name_prefix": "time10",
+          "cycle": 3,
+          "match_str": "(\\d+\\.?\\d*)",
+          "threshold": 10
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    {
+      "formula": "nginx_time1_cnt > 20",
+      "warning_filter": "1/1",
+      "alert_name": "5秒内请求时间超过1秒的请求数超过20个",
+      "alert_command": "nc 127.0.0.1 8888"
+    },
+    {
+      "formula": "nginx_time1_avg > 1.1",
+      "warning_filter": "1/1",
+      "alert_name": "5秒内请求时间超过1秒的请求数的平均响应时间超过1.1秒",
+      "alert_command": ""
+    },
+    {
+      "formula": "nginx_time10_cnt > 20",
+      "warning_filter": "1/1",
+      "alert_name": "5秒内请求时间超过10秒的请求数超过20个",
+      "alert_command": ""
+    },
+    {
+      "formula": "nginx_time10_avg > 1.1",
+      "warning_filter": "1/1",
+      "alert_name": "5秒内请求时间超过10秒的请求数的平均响应时间超过1.1秒"
+    },
+    {
+      "formula": "nginx2_time1_cnt > 20",
+      "warning_filter": "1/1",
+      "alert_name": "5秒内请求时间超过1秒的请求数超过20个"
+    },
+    {
+      "formula": "nginx2_time1_avg > 1.1",
+      "warning_filter": "1/1",
+      "alert_name": "5秒内请求时间超过1秒的请求数的平均响应时间超过1.1秒"
+    },
+    {
+      "formula": "nginx2_time10_cnt > 20",
+      "warning_filter": "1/1",
+      "alert_name": "5秒内请求时间超过10秒的请求数超过20个"
+    },
+    {
+      "formula": "nginx2_time10_avg > 1.1",
+      "warning_filter": "1/1",
+      "alert_name": "5秒内请求时间超过10秒的请求数的平均响应时间超过1.1秒"
+    }
+  ]
+}

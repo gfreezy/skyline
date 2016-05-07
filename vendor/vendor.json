@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "Y1eQfa5Gwr/vIFp7JiEL7fdZAss=",
+			"path": "github.com/Knetic/govaluate",
+			"revision": "63c7fee765ffe58e3c4693fd159702bb4c38d92d",
+			"revisionTime": "2016-04-28T02:20:19Z"
+		},
+		{
 			"checksumSHA1": "arojRtqOmOlvVF+Bo4mv05dF/wc=",
 			"path": "github.com/hpcloud/tail",
 			"revision": "a30252cb686a21eb2d0b98132633053ec2f7f1e5",
@@ -33,20 +39,24 @@
 			"revisionTime": "2016-04-28T00:30:50Z"
 		},
 		{
-			"path": "golang.org/x/sys/unix",
-			"revision": ""
+			"checksumSHA1": "l8l233JSJQkDlHGv5kt7m/pWRoQ=",
+			"path": "github.com/kesselborn/go-getopt",
+			"revision": "f1ec725d509d95c9d6c6617aa1f69a049e3503b0",
+			"revisionTime": "2012-03-30T10:24:09Z"
 		},
 		{
-			"checksumSHA1": "JfVmsMwyeeepbdw4q4wpN07BuFg=",
+			"checksumSHA1": "mFhvo8ZlZg1Y1wxet9ndm6JQkJQ=",
+			"origin": "github.com/hpcloud/tail/vendor/gopkg.in/fsnotify.v1",
 			"path": "gopkg.in/fsnotify.v1",
-			"revision": "30411dbcefb7a1da7e84f75530ad3abe4011b4f8",
-			"revisionTime": "2016-04-12T13:37:56Z"
+			"revision": "a30252cb686a21eb2d0b98132633053ec2f7f1e5",
+			"revisionTime": "2016-04-28T00:30:50Z"
 		},
 		{
-			"checksumSHA1": "TO8baX+t1Qs7EmOYth80MkbKzFo=",
+			"checksumSHA1": "z56sI90RWCJhiiLlOExjEARbj7I=",
+			"origin": "github.com/hpcloud/tail/vendor/gopkg.in/tomb.v1",
 			"path": "gopkg.in/tomb.v1",
-			"revision": "dd632973f1e7218eb1089048e0798ec9ae7dceb8",
-			"revisionTime": "2014-10-24T13:56:13Z"
+			"revision": "a30252cb686a21eb2d0b98132633053ec2f7f1e5",
+			"revisionTime": "2016-04-28T00:30:50Z"
 		}
 	],
 	"rootPath": "github.com/gfreezy/skyline"
