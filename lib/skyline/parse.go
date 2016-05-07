@@ -9,14 +9,14 @@ import (
 type lineStats struct {
 	Matched bool
 	Time    time.Time
-	Number  float32
+	Number  float64
 }
 
 func parseLine(line []byte, matchStr *regexp.Regexp, t time.Time) lineStats {
 	matches := matchStr.FindSubmatch(line)
 	var (
 		matched = false
-		number  float32
+		number  float64
 	)
 	switch len(matches) {
 	case 1:
@@ -24,11 +24,11 @@ func parseLine(line []byte, matchStr *regexp.Regexp, t time.Time) lineStats {
 		number = 0
 	case 2:
 		matched = true
-		n, err := strconv.ParseFloat(string(matches[1]), 32)
+		n, err := strconv.ParseFloat(string(matches[1]), 64)
 		if err != nil {
 			n = 0
 		}
-		number = float32(n)
+		number = float64(n)
 	}
 
 	return lineStats{

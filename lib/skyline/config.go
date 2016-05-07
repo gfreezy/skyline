@@ -9,7 +9,7 @@ type FilterItemConf struct {
 	ItemNamePrefix string  `json:"item_name_prefix"`
 	Cycle          int64   `json:"cycle"`
 	MatchStr       string  `json:"match_str"`
-	Threshold      float32 `json:"threshold"`
+	Threshold      float64 `json:"threshold"`
 }
 
 type MonitorConf struct {
@@ -23,6 +23,7 @@ type WarningConf struct {
 	Formula       string `json:"formula"`
 	WarningFilter string `json:"warning_filter"`
 	AlertName     string `json:"alert_name"`
+	AlertCommand  string `json:"alert_command"`
 }
 
 type Config struct {
@@ -30,15 +31,15 @@ type Config struct {
 	Warnings []WarningConf `json:"warnings"`
 }
 
-func LoadConfig(path string) Config {
+func LoadConfig(path string) (Config, error) {
+	config := Config{}
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
-		panic(err)
+		return config, err
 	}
 
-	config := Config{}
 	if err = json.Unmarshal(content, &config); err != nil {
-		panic(err)
+		return config, err
 	}
-	return config
+	return config, nil
 }
