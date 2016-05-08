@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"os"
+
 	"github.com/gfreezy/skyline/lib/skyline"
 )
 
@@ -21,12 +23,12 @@ func warn(filterWarnings *skyline.FilterWarnings, statsChan <-chan skyline.Cycle
 				warning.IsWarning = true
 				msg := fmt.Sprintf("[%s]WARN: %s[%s]\n", time.Now(), warning.AlertName, warning.Formula)
 				warning.Warn(msg)
-				// fmt.Print(msg)
+				fmt.Fprintln(os.Stderr, msg)
 			} else if warning.IsWarning {
 				warning.IsWarning = false
 				msg := fmt.Sprintf("[%s]OK: %s[%s]\n", time.Now(), warning.AlertName, warning.Formula)
 				warning.Warn(msg)
-				// fmt.Print(msg)
+				fmt.Fprintln(os.Stderr, msg)
 			}
 		}
 
