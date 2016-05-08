@@ -1,7 +1,6 @@
 package skyline
 
 import (
-	"fmt"
 	"strings"
 
 	"strconv"
@@ -89,10 +88,7 @@ func (warning *Warning) Warn(msg string) {
 		args := strings.Fields(warning.AlertCommand)
 		cmd := exec.Command(args[0], args[1:]...)
 		cmd.Stdin = strings.NewReader(msg)
-		err := cmd.Run()
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+		cmd.Run()
 	}(msg)
 }
 

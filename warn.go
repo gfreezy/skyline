@@ -19,16 +19,17 @@ func warn(filterWarnings *skyline.FilterWarnings, statsChan <-chan skyline.Cycle
 		for _, warning := range filterWarnings.Warnings {
 			needWarn := checkWarning(ringStats, warning)
 
+			now := time.Now().Format(time.RFC3339)
 			if needWarn {
 				warning.IsWarning = true
-				msg := fmt.Sprintf("[%s]WARN: %s[%s]\n", time.Now(), warning.AlertName, warning.Formula)
+				msg := fmt.Sprintf("[%s] WARN: %s[%s]\n", now, warning.AlertName, warning.Formula)
 				warning.Warn(msg)
-				fmt.Fprintln(os.Stderr, msg)
+				fmt.Fprint(os.Stderr, msg)
 			} else if warning.IsWarning {
 				warning.IsWarning = false
-				msg := fmt.Sprintf("[%s]OK: %s[%s]\n", time.Now(), warning.AlertName, warning.Formula)
+				msg := fmt.Sprintf("[%s] OK: %s[%s]\n", now, warning.AlertName, warning.Formula)
 				warning.Warn(msg)
-				fmt.Fprintln(os.Stderr, msg)
+				fmt.Fprint(os.Stderr, msg)
 			}
 		}
 

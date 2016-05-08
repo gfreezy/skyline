@@ -16,6 +16,7 @@ func main() {
 	optionDefinition := getopt.Options{
 		Description: "Monitor logs\n\nTest regexp: skyline -r \"regexp to test\" \"text to be tested\" ",
 		Definitions: getopt.Definitions{
+			{"debug|d", "debug", getopt.Optional | getopt.Flag, false},
 			{"config|c", "config file", getopt.Required, ""},
 			{"regexp|r", "test regexp", getopt.Optional, ""},
 		},
@@ -42,6 +43,8 @@ func main() {
 		}
 		os.Exit(exitCode)
 	}
+
+	skyline.Debug = options["debug"].Bool
 
 	conf, err := skyline.LoadConfig(options["config"].String)
 	if err != nil {
@@ -73,6 +76,7 @@ func monitor(monitorConf skyline.MonitorConf, warningCenter *skyline.WarningCent
 				Offset: 0,
 				Whence: os.SEEK_END,
 			},
+			Logger: tail.DiscardingLogger,
 		},
 	)
 	if err != nil {
@@ -88,7 +92,6 @@ func monitor(monitorConf skyline.MonitorConf, warningCenter *skyline.WarningCent
 		if !ok {
 			continue
 		}
-		fmt.Println(filterWarnings.Warnings[0].Formula)
 		go warn(filterWarnings, filter.CycleStatsChannel)
 	}
 
@@ -97,7 +100,7 @@ func monitor(monitorConf skyline.MonitorConf, warningCenter *skyline.WarningCent
 			if f == nil {
 				continue
 			}
-			f.AddLine([]byte(line.Text), line.Time, true)
+			f.AddLine([]byte(line.Text), line.Time)
 		}
 	}
 }

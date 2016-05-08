@@ -35,16 +35,21 @@ func NewFilter(name string, conf *FilterItemConf) *Filter {
 	}
 }
 
-func (self *Filter) AddLine(line []byte, t time.Time, debug bool) {
+func (self *Filter) AddLine(line []byte, t time.Time) {
 	cycleNumber := t.Unix() / self.cyclePeriod
 	if cycleNumber != self.currentCycleNumber {
-		if debug {
-			fmt.Println(
-				"name:", self.Name,
-				"cycle_id:", self.cycleStats.Id,
-				"count:", self.cycleRealCount,
-				"rate:", self.circleRealRate(),
-				"time:", t)
+		if Debug {
+			fmt.Printf(
+				"[%s] name: %s, cycle: %d, count: %d/%d, rate: %d/%d, avg: %.3f\n",
+				t.Format(time.RFC3339),
+				self.Name,
+				self.cycleStats.Id,
+				self.cycleStats.Count,
+				self.cycleRealCount,
+				self.cycleStats.Rate(),
+				self.circleRealRate(),
+				self.cycleStats.Averate(),
+			)
 		}
 		self.CycleStatsChannel <- *self.cycleStats
 		self.cycleStats = NewCycle(self.cycleID, self.Name, self.cyclePeriod)

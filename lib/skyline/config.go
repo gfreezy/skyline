@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 )
 
+var Debug bool
+
 type FilterItemConf struct {
 	ItemNamePrefix string  `json:"item_name_prefix"`
 	Cycle          int64   `json:"cycle"`
