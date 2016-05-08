@@ -58,7 +58,17 @@ func main() {
 
 func monitor(monitorConf skyline.MonitorConf, warningCenter *skyline.WarningCenter) {
 	var filename = monitorConf.LogFilePath
-	t, err := tail.TailFile(filename, tail.Config{Follow: true, ReOpen: true})
+	t, err := tail.TailFile(
+		filename,
+		tail.Config{
+			Follow: true,
+			ReOpen: true,
+			Location: &tail.SeekInfo{
+				Offset: 0,
+				Whence: os.SEEK_END,
+			},
+		},
+	)
 	if err != nil {
 		panic(err)
 	}
