@@ -7,6 +7,8 @@ import (
 
 	"os/exec"
 
+	"fmt"
+
 	"github.com/Knetic/govaluate"
 )
 
@@ -88,7 +90,10 @@ func (warning *Warning) Warn(msg string) {
 		args := strings.Fields(warning.AlertCommand)
 		cmd := exec.Command(args[0], args[1:]...)
 		cmd.Stdin = strings.NewReader(msg)
-		cmd.Run()
+		err := cmd.Run()
+		if err != nil && Debug {
+			fmt.Println(err.Error())
+		}
 	}(msg)
 }
 
