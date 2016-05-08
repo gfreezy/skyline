@@ -5,6 +5,8 @@ import (
 	"os"
 	"sync"
 
+	"regexp"
+
 	"github.com/gfreezy/skyline/lib/skyline"
 	"github.com/hpcloud/tail"
 	getopt "github.com/kesselborn/go-getopt"
@@ -12,14 +14,16 @@ import (
 
 func main() {
 	optionDefinition := getopt.Options{
-		"Monitor logs",
+		"Monitor logs\n\nTest regexp: skyline -r \"regexp to test\" \"text to be tested\" ",
 		getopt.Definitions{
 			{"config|c", "config file", getopt.Required, ""},
+			{"regexp|r", "test regexp", getopt.Optional, ""},
 		},
 	}
 
-	options, _, _, e := optionDefinition.ParseCommandLine()
+	options, arguments, _, e := optionDefinition.ParseCommandLine()
 
+	reStr := options["regexp"].String
 	help, wantsHelp := options["help"]
 
 	if e != nil || wantsHelp {
@@ -30,6 +34,8 @@ func main() {
 			fmt.Print(optionDefinition.Usage())
 		case wantsHelp && help.String == "help":
 			fmt.Print(optionDefinition.Help())
+		case len(reStr) > 0 && len(arguments) == 1:
+			testRegexp(reStr, arguments[0])
 		default:
 			fmt.Printf("**** Error: %s\n\n%s", e.Error(), optionDefinition.Help())
 			exitCode = e.ErrorCode
@@ -93,5 +99,18 @@ func monitor(monitorConf skyline.MonitorConf, warningCenter *skyline.WarningCent
 			}
 			f.AddLine([]byte(line.Text), line.Time, true)
 		}
+	}
+}
+
+func testRegexp(reStr string, rawString string) {
+	re := regexp.MustCompile(reStr)
+	matched := re.FindStringSubmatch(rawString)
+	if len(matched) == 0 {
+		fmt.Printf("\"%s\" matches nothing.\n", reStr)
+		return
+	}
+	fmt.Printf("\"%s\" matches:\n", reStr)
+	for _, s := range matched {
+		fmt.Printf("\t%s\n", s)
 	}
 }
