@@ -14,8 +14,8 @@ import (
 
 func main() {
 	optionDefinition := getopt.Options{
-		"Monitor logs\n\nTest regexp: skyline -r \"regexp to test\" \"text to be tested\" ",
-		getopt.Definitions{
+		Description: "Monitor logs\n\nTest regexp: skyline -r \"regexp to test\" \"text to be tested\" ",
+		Definitions: getopt.Definitions{
 			{"config|c", "config file", getopt.Required, ""},
 			{"regexp|r", "test regexp", getopt.Optional, ""},
 		},
