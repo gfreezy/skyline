@@ -1,0 +1,14 @@
+language: go
+go:
+- '1.6'
+install:
+- mkdir -p release
+- go get -d -v ./...
+- go build -o release/skyline
+deploy:
+  provider: releases
+  api_key:
+    secure: aW+fP21R6i61kgx9Ou7XoHGoYTCTkFAMyVMtJi1XUfWh7QJ1DBetVabzCM1cePJGL07X/ABkosznjbs8ToGb6fHMws3Vvhc5PrnGHnk68/zb9jtUIjBU6UCMRkO4KXwEB3G1TGtpj2FZ6rY3dtP6MAYVn0wSRacstK3i7Wz+WM6kzyVbzFyWeit39XZrRzAlqsv2sbjvb7LmYWSRYCtiu9fiz4nIbLOBi7c5aQAAxZa1jbEf8rs+ccAxNAKCbfqa01w4/hbkQ4DBP6GC6NmzIV/+pTOFmJowM7cFtoFHyGusBZi8MzXmAGFiGcFwI0gQ5u0YeYWo+Kzt8BI2lvCUUXy6iAH9Ra71ieqJfWqRXgc+H3zKWdhx3eMF8/Mh+2fwUHd9d+29Kzp3jcB+Mo1I9PyE8PMLqGEn90M++7WSev3KRMwQaWGUGumGaRhS+iRrTUWovIuLLGQBmbDnChoQl4JQH/nSlocCoAN51LuVWWvRY3dYEWgUpmO8DPjSYx5XE+HN5YA3IO+iMQNjpNtt+eisJaUuN01vZ6ZYSt81+VPaIywejloz4Hvo3aUxaR6/RwiJhpj9Q/OwpRmEjHYBNDJCZ7Us2iR0LLZHrPAz7D0Pn55nUl63+DOOQHkUesJILPmT61KJ9D0zp/1o0kmpdFrmh5jP76wtPHFB3FfHiog=
+  file: release/skyline
+  on:
+    repo: gfreezy/skyline
