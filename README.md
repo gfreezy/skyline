@@ -1,6 +1,11 @@
 # skyline
 实时监控日志工具
 
+# 安装
+```bash
+go get github.com/gfreezy/skyline
+```
+
 # 使用方法
 ```bash
 skyline -h
