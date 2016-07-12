@@ -72,6 +72,7 @@ func monitor(monitorConf skyline.MonitorConf, warningCenter *skyline.WarningCent
 		tail.Config{
 			Follow: true,
 			ReOpen: true,
+			Poll:   true,
 			Location: &tail.SeekInfo{
 				Offset: 0,
 				Whence: os.SEEK_END,
