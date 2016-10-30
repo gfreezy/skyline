@@ -3,6 +3,10 @@ package skyline
 import (
 	"encoding/json"
 	"io/ioutil"
+	"path"
+
+	"github.com/ghodss/yaml"
+	"github.com/pkg/errors"
 )
 
 var Debug bool
@@ -33,15 +37,24 @@ type Config struct {
 	Warnings []WarningConf `json:"warnings"`
 }
 
-func LoadConfig(path string) (Config, error) {
+func LoadConfig(configPath string) (Config, error) {
 	config := Config{}
-	content, err := ioutil.ReadFile(path)
+	content, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		return config, err
 	}
 
-	if err = json.Unmarshal(content, &config); err != nil {
-		return config, err
+	ext := path.Ext(configPath)
+	if ext == ".json" {
+		if err = json.Unmarshal(content, &config); err != nil {
+			return config, err
+		}
+	} else if ext == ".yml" {
+		if err = yaml.Unmarshal(content, &config); err != nil {
+			return config, err
+		}
+	} else {
+		return config, errors.New("not valid config")
 	}
 	return config, nil
 }
