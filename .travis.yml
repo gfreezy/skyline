@@ -11,4 +11,5 @@ deploy:
   file:
   - release/skyline
   on:
+    tags: true
     repo: gfreezy/skyline
