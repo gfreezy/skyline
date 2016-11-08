@@ -117,3 +117,58 @@ skyline -r "(\\d+\\.?\\d*)" '223.104.4.148 09/May/2016:13:32:36 +0800 "GET /v2/r
   ]
 }
 ```
+
+```yml
+---
+monitors:
+- log_name_prefix: ngx_api
+  log_file_path: "/data/log/nginx/api.main.log"
+  filter_items:
+  - item_name_prefix: status_500
+    cycle: 5
+    match_str: "\"\t500\t"
+  - item_name_prefix: status_504
+    cycle: 5
+    match_str: "\"\t504\t"
+  - item_name_prefix: time
+    cycle: 5
+    match_str: "\t([^ ]+)\t[^ ]+\t[^ ]+$"
+- log_name_prefix: ngx_www
+  log_file_path: "/data/log/nginx/www.main.log"
+  filter_items:
+  - item_name_prefix: status_500
+    cycle: 5
+    match_str: "\"\t500\t"
+  - item_name_prefix: status_504
+    cycle: 5
+    match_str: "\"\t504\t"
+  - item_name_prefix: time
+    cycle: 5
+    match_str: "\t([^ ]+)\t[^ ]+\t[^ ]+$"
+warnings:
+- formula: ngx_api_status_500_cnt > 50
+  warning_filter: 1/1
+  alert_name: '500 过多 '
+  alert_command: mercurytalk
+- formula: ngx_api_status_504_cnt > 50
+  warning_filter: 1/1
+  alert_name: '超时过多 '
+  alert_command: mercurytalk
+- formula: ngx_api_time_avg > 0.5
+  warning_filter: 1/1
+  alert_name: '请求时间超过 0.5 '
+  alert_command: "/usr/local/bin/mercurytalk"
+- formula: ngx_www_status_500_cnt > 50
+  warning_filter: 1/1
+  alert_name: '500 过多 '
+  alert_command: mercurytalk
+- formula: ngx_www_status_504_cnt > 50
+  warning_filter: 1/1
+  alert_name: '超时过多 '
+  alert_command: mercurytalk
+- formula: ngx_www_time_avg > 1
+  warning_filter: 1/1
+  alert_name: '请求时间超过 1 '
+  alert_command: "/usr/local/bin/mercurytalk"
+
+```
